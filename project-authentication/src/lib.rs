@@ -12,18 +12,20 @@ pub struct MyAuthenticationService {
 }
 
 impl MyAuthenticationService {
-    pub fn new() -> Self {
-        Self {
-            status: RefCell::new(AuthenticationState::NotAuthenticated),
-        }
-    }
-
     fn set_authentication_state(&self, new_state: AuthenticationState) {
         *self.status.borrow_mut() = new_state;
     }
 
     fn get_authentication_state(&self) -> AuthenticationState {
         self.status.borrow().clone()
+    }
+}
+
+impl Default for MyAuthenticationService {
+    fn default() -> Self {
+        Self {
+            status: RefCell::new(AuthenticationState::NotAuthenticated),
+        }
     }
 }
 
@@ -51,13 +53,13 @@ mod test {
 
     #[test]
     fn initial_state_is_not_authenticated() {
-        let auth_service = MyAuthenticationService::new();
+        let auth_service = MyAuthenticationService::default();
         assert_eq!(auth_service.is_authenticated(), false)
     }
 
     #[test]
     fn right_credentials_authenticate_properly() {
-        let auth_service = MyAuthenticationService::new();
+        let auth_service = MyAuthenticationService::default();
         auth_service.authenticate("ciao", "ciao");
 
         assert!(auth_service.is_authenticated())
@@ -65,7 +67,7 @@ mod test {
 
     #[test]
     fn wrong_credentials_doesnt_authenticate() {
-        let auth_service = MyAuthenticationService::new();
+        let auth_service = MyAuthenticationService::default();
         auth_service.authenticate("wrong", "wrong");
 
         assert_eq!(auth_service.is_authenticated(), false)

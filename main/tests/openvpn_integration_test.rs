@@ -1,5 +1,6 @@
 use std::cell::RefCell;
 
+use main::my_service_provider::MyServiceProvider;
 use project_authentication::MyAuthenticationService;
 use project_vpn::MyVPNService;
 use traits::{AuthenticationService, ServiceProvider, VPNService};
@@ -7,6 +8,15 @@ use traits::{AuthenticationService, ServiceProvider, VPNService};
 struct MockedAuthenticationService {
     called: RefCell<bool>,
     inner: MyAuthenticationService,
+}
+
+impl Default for MockedAuthenticationService {
+    fn default() -> Self {
+        Self {
+            called: RefCell::new(false),
+            inner: MyAuthenticationService::default(),
+        }
+    }
 }
 
 impl AuthenticationService for MockedAuthenticationService {
@@ -20,30 +30,11 @@ impl AuthenticationService for MockedAuthenticationService {
     }
 }
 
-struct TestServiceProvider {
-    auth_service: MockedAuthenticationService,
-    vpn_service: MyVPNService,
-}
-
-impl ServiceProvider<MockedAuthenticationService, MyVPNService> for TestServiceProvider {
-    fn get_authentication_service(&self) -> &MockedAuthenticationService {
-        &self.auth_service
-    }
-
-    fn get_vpn_service(&self) -> &MyVPNService {
-        &self.vpn_service
-    }
-}
+type TestServiceProvider = MyServiceProvider<MockedAuthenticationService, MyVPNService>;
 
 #[test]
 fn authentication_service_is_called_before_opening() {
-    let provider = TestServiceProvider {
-        auth_service: MockedAuthenticationService {
-            called: RefCell::new(false),
-            inner: MyAuthenticationService::new(),
-        },
-        vpn_service: MyVPNService::new(),
-    };
+    let provider = TestServiceProvider::default();
 
     let _ = provider
         .get_vpn_service()

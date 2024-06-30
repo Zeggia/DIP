@@ -1,27 +1,25 @@
-use project_authentication::MyAuthenticationService;
-use project_vpn::MyVPNService;
-use traits::ServiceProvider;
+use traits::{AuthenticationService, ServiceProvider, VPNService};
 
-pub(super) struct MyServiceProvider {
-    authentication_service: MyAuthenticationService,
-    vpn_service: MyVPNService,
+pub struct MyServiceProvider<T: AuthenticationService, K: VPNService> {
+    authentication_service: T,
+    vpn_service: K,
 }
 
-impl MyServiceProvider {
-    pub(super) fn init() -> Self {
+impl<T: AuthenticationService, K: VPNService> Default for MyServiceProvider<T, K> {
+    fn default() -> Self {
         Self {
-            authentication_service: MyAuthenticationService::new(),
-            vpn_service: MyVPNService::new(),
+            authentication_service: Default::default(),
+            vpn_service: Default::default(),
         }
     }
 }
 
-impl ServiceProvider<MyAuthenticationService, MyVPNService> for MyServiceProvider {
-    fn get_authentication_service(&self) -> &MyAuthenticationService {
+impl<T: AuthenticationService, K: VPNService> ServiceProvider<T, K> for MyServiceProvider<T, K> {
+    fn get_authentication_service(&self) -> &T {
         &self.authentication_service
     }
 
-    fn get_vpn_service(&self) -> &MyVPNService {
+    fn get_vpn_service(&self) -> &K {
         &self.vpn_service
     }
 }
