@@ -1,0 +1,11 @@
+[package]
+name = "main"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+traits = { path = "../traits" }
+project-authentication = { path = "../project-authentication"}
+project-vpn = { path = "../project-vpn"}
