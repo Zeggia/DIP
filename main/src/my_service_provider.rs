@@ -14,7 +14,10 @@ impl<T: AuthenticationService, K: VPNService> Default for MyServiceProvider<T, K
     }
 }
 
-impl<T: AuthenticationService, K: VPNService> ServiceProvider<T, K> for MyServiceProvider<T, K> {
+impl<T: AuthenticationService, K: VPNService> ServiceProvider for MyServiceProvider<T, K> {
+    type AuthenticationServiceType = T;
+    type VPNServiceType = K;
+
     fn get_authentication_service(&self) -> &T {
         &self.authentication_service
     }

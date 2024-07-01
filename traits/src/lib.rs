@@ -11,7 +11,10 @@ pub trait VPNService: Default {
     ) -> Result<(), String>;
 }
 
-pub trait ServiceProvider<T: AuthenticationService, K: VPNService> {
-    fn get_authentication_service(&self) -> &T;
-    fn get_vpn_service(&self) -> &K;
+pub trait ServiceProvider {
+    type AuthenticationServiceType: AuthenticationService;
+    type VPNServiceType: VPNService;
+
+    fn get_authentication_service(&self) -> &Self::AuthenticationServiceType;
+    fn get_vpn_service(&self) -> &Self::VPNServiceType;
 }
